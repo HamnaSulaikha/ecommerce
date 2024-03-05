@@ -1,0 +1,3 @@
+
+RAZORPAY_API_KEY = 'rzp_test_zvfZpgdJZhTlt5'
+RAZORPAY_API_SECRET = 'ou9jCNIP0OMnJ7KpLU0m74tJ'

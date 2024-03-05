@@ -1,0 +1,34 @@
+{% extends "main.html" %}
+{% load static %}
+
+
+
+{% block content %}
+  <div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+    <div class="card rounded-3 shadow-sm">
+      <div class="card-body">
+        <h2 class="text-center mb-4">OTP Verification</h2>
+
+        <!-- OTP Form -->
+        <form method="post" action="">
+          {% csrf_token %}
+          
+          <!-- OTP Input Field -->
+          <div class="mb-3 form-label">
+            <label for="otp" class="form-label">OTP</label>
+            <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter OTP" required>
+            
+          </div>
+
+          <!-- Verify OTP Button -->
+          <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
+        </form>
+
+        <!-- Resend OTP Link -->
+        <div class="text-center mt-3">
+          <a href="">Resend OTP</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

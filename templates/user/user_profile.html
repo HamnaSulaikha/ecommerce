@@ -1,0 +1,129 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<div class="container m-4">
+  <h1 class="mb-4">Hai {{ user.username }}</h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="mb-4">Personal Information</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+
+          <label for="username" class="form-label">Username:</label>
+
+          <input type="text" class="form-control" id="username" value="{{ user.username }}" disabled>
+
+        </div>
+
+        <div class="mb-3">
+
+          <label for="phone" class="form-label">Phone Number:</label>
+
+          <input type="text" class="form-control" id="phone" name="phone" value="{{ user.profile.phone }}">
+
+        </div>
+        <div class="mb-3">
+
+          <label for="email" class="form-label">Email</label>
+
+          <input type="text" class="form-control" id="email" name="email" value="{{ user.profile.email }}">
+
+        </div>
+        <div class="mb-3">
+
+          <label for="age" class="form-label">Age:</label>
+
+          <input type="number" class="form-control" id="age" name="age" value="{{ user.profile.age }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+
+    
+
+    <div class="col-md-6">
+      <h2 class="mb-4">Addresses</h2>
+      <ul class="list-group">
+        {% for address in user.address_set.all %}
+        <li class="list-group-item">
+          {{ address.street }}<br>
+          {{ address.city }}, {{ address.state }}, {{ address.zip_code }}
+          <a href="#" class="btn btn-sm btn-primary">Edit</a>
+          
+        </li>
+        {% endfor %}
+      </ul>
+      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAddressModal">Add
+        Address</button>
+    </div>
+  </div>
+</div>
+<div class="modal fade " id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <form method="post" action="{% url 'add_address' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+
+          <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+
+            <label for="street" class="form-label">Street:</label>
+
+            <input type="text" class="form-control" id="street" name="street">
+
+          </div>
+
+          <div class="mb-3">
+
+            <label for="city" class="form-label">City:</label>
+
+            <input type="text" class="form-control" id="city" name="city">
+          </div>
+
+          <div class="mb-3">
+
+            <label for="state" class="form-label">State:</label>
+
+            <input type="text" class="form-control" id="state" name="state">
+
+          </div>
+
+          <div class="mb-3">
+
+            <label for="pin" class="form-label">Pin :</label>
+
+            <input type="text" class="form-control" id="pin" name="pin">
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save Address</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+  </div>
+  <a href="{% url 'change_password' %}" class="btn btn-primary m-4">Change Password</a>
+</div>
+
+{% endblock %}

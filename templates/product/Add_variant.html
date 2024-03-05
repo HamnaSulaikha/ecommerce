@@ -1,0 +1,65 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block title %}
+Add Variant
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+  <h1>Add Variant</h1>
+  <hr>
+
+  <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="product" class="form-label">Product:</label>
+      <p class="form-text">{{ product.name }}</p>
+      <input type="hidden" id="product" name="product" value="{{ product.id }}">
+    </div>
+
+    <div class="mb-3">
+      <label for="color" class="form-label">Color:</label>
+      <input type="text" class="form-control" id="color" name="color" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="stock" class="form-label">Stock:</label>
+      <input type="number" class="form-control" id="stock" name="stock" min="0" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="price_modifier" class="form-label">Price Modifier:</label>
+      <input type="number" step="0.01" class="form-control" id="price_modifier" name="price_modifier" min="0" >
+    </div>
+
+    <div class="mb-3">
+      <label for="brand" class="form-label">Brand:</label>
+      <input type="text" class="form-control" id="brand" name="brand">
+    </div>
+
+    <div class="mb-3">
+      <label for="quality" class="form-label">Quality:</label>
+      <input type="text" class="form-control" id="quality" name="quality">
+    </div>
+
+    <div class="mb-3">
+      <label for="features" class="form-label">Features:</label>
+      <input type="text" class="form-control" id="features" name="features">
+    </div>
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Image:</label>
+      <input type="file" class="form-control" id="image" name="image">
+      <label for="image" class="form-label">Image:</label>
+      <input type="file" class="form-control" id="image" name="image2">
+      <label for="image" class="form-label">Image:</label>
+      <input type="file" class="form-control" id="image" name="image3">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Variant</button>
+  </form>
+</div>
+
+{% endblock %}

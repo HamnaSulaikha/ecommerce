@@ -1,0 +1,28 @@
+{% extends "base_admin.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Coupon{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  
+    <h1 class="mb-4 text-center">Add new Coupon</h1>
+    <a href="{% url 'coupon_list' %}" class="btn btn-secondary mt-3">Back to Coupon List</a>
+    <hr>
+    <div class="container w-50 ">
+
+      <form method="post" class="col-md-6">
+        {% csrf_token %}
+        {{ form.as_p   }}
+        <button type="submit" class="btn btn-primary">Add Coupon</button>
+      </form>
+    </div>
+    
+  </div>
+
+
+
+
+{% endblock %}

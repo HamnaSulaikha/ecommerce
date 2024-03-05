@@ -1,0 +1,90 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block title %}
+Admin Panel
+{% endblock %}
+
+{% block content %}
+<h3 class="mt-4 mb-4">Category</h3>
+
+<h1>Category Management</h1>
+
+
+
+<table class="table table-striped m-4">
+    <thead>
+        <tr>
+            <th>Category Name</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in catgry %}
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.description }}</td>
+            <td><img src="{{ c.image.url }}" alt="image" class="img-thumbnail" style="width: 100px; height: 100px;">
+            </td>
+
+            <td>
+                <a href="{% url 'edit_category' c.id %}" class="btn btn-primary btn-sm"><i
+                        class="fa-solid fa-pen-to-square"></i></a>
+                <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#deleteModal{{ c.id }}"><i class="fa-solid fa-trash-can"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+    {% for c in catgry %}
+    <div class="modal fade" id="deleteModal{{ c.id }}" tabindex="-1" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+
+
+        <div class="modal-dialog">
+
+
+            <div class="modal-content">
+
+
+                <div class="modal-header">
+
+
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Category</h5>
+
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
+                </div>
+
+
+                <div class="modal-body">
+                    Are you sure you want to delete the category "{{ c.name }}"?
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+
+                    <form action="{% url 'delete_category' c.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</table>
+
+
+
+<div class="m-3">
+    <a href="{% url 'add_category' %}" class="btn btn-success">Add Category</a>
+</div>
+
+{% endblock %}

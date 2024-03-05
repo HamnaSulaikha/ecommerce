@@ -1,0 +1,128 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<body>
+
+
+  <div class="container">
+    <h1 class="mb-4">Shopping Cart</h1>
+    
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Unit Price</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if cart %}
+          <h4>Your cart is empty!</h4>
+          
+          {% else %}
+          
+          {% for item in cart_items %}
+          <tr data-id="{{ item.id }}">
+            <td><a href="{% url 'product_details' item.product.id %}">{{ item.title }}</a> </td>
+            <td>
+
+              <div class="d-flex">
+                <button class="btn btn-sm btn-outline-primary decrease-quantity"><i class="fas fa-minus"></i></button>
+                <button class="btn btn-sm btn-outline-primary w-100">{{ item.quantity }}</button>
+                <button class="btn btn-sm btn-outline-primary increase-quantity"><i class="fas fa-plus"></i></button>
+              </div>
+              
+            </td>
+            <td>{{ item.product.price }}</td>
+            <td>{{ item.sub_total }}</td>
+            <td>
+              <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif%}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-end">Total</td>
+            <td>
+              <div id="total-price">{{ total|floatformat:2 }}</div>
+            </td>
+  
+            
+          </tr>
+        </tfoot>
+      </table>
+      <div class="d-flex justify-content-between mt-4">
+        <a href="{% url "category" %}" class="btn btn-primary">Continue Shopping</a>
+        <a href="{% url 'checkout' %}" class="btn btn-success">Proceed to Checkout</a>
+      </div>
+  </div>
+    
+  
+  <script>
+    $(document).ready(function () {
+  $('.decrease-quantity, .increase-quantity').on('click', function (e) {
+    e.preventDefault();
+    var action = $(this).hasClass('decrease-quantity') ? 'decrease' : 'increase';
+    var cartItemId = $(this).closest('tr').data('id');
+    var quantityElement = $(this).closest('tr').find('.btn-outline-primary.w-100');
+
+    $.ajax({
+      type: "POST",
+      url: action === 'decrease' ? "{% url 'decrease_quantity' 0 %}".replace('0', cartItemId) : "{% url 'increase_quantity' 0 %}".replace('0', cartItemId),
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success: function (response) {
+        if (action === 'increase') {
+          var newQuantity = parseInt(quantityElement.text()) + 1;
+      } else {
+          var newQuantity = parseInt(quantityElement.text()) - 1;
+          newQuantity = Math.max(newQuantity, 0); 
+      }
+      quantityElement.text(newQuantity);
+      
+      // Update the subtotal in the UI
+      var subtotalElement = $(this).closest('tr').find('[data-subtotal]');
+      subtotalElement.text('₹ ' + response.subtotal.toFixed(2));
+      console.log(subtotalElement)
+      
+      // Update the total price in the UI
+      $('#total-price').text('₹ ' + response.total.toFixed(2));
+      console.log(response.total)
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  });
+
+  $('.remove-from-cart').on('click', function (e) {
+    e.preventDefault();
+    var cartItemId = $(this).closest('tr').data('id');
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'remove_from_cart' 0 %}".replace('0', cartItemId),
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success: function (response) {
+        console.log(response);
+        alert(response.message);
+
+        // Remove the table row from the UI
+        $(`tr[data-id='${cartItemId}']`).remove();
+
+        // Update the total price in the UI
+        $('#total-price').text('₹ ' + response.total.toFixed(2));
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  });
+});
+  </script>
+  
+  {% endblock content %}

@@ -1,0 +1,89 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block title %}
+{{ product.name }} Details
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+  <h1>{{ product.name }}</h1>
+  <hr>
+
+  <div class="row">
+    <div class="col-md-4">
+      <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="width: 300px; height: 300px;">
+    </div>
+    <div class="col-md-8">
+      <h5 class="card-title">{{ product.name }}</h5>
+      <p class="card-text">{{ product.description|truncatewords:50 }}</p>
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="text-muted">Price: ₹{{ product.price }}</span>
+        
+      </div>
+      <p class="small text-muted">Category: {{ product.category }}</p>
+      
+        <p class="small text-muted">Brand: {{ product.brand }}</p>
+      
+      {% if product.discount_percentage %}
+          <p class="badge bg-success">Discount: {{ product.discount_percentage }}%</p>
+      {% endif %}
+    <br>
+      {% if product.discount_percentage %}
+          <p class="badge bg-info">Rating: {{ product.rating }}</p>
+      {% endif %}
+      
+      <p class="small text-muted">Available: {{ product.is_available|yesno:"Yes,No" }}</p>
+      <hr>
+
+  <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm">Edit Product</a>
+  <a href="{% url 'add_variant' product.id %}" class="btn btn-secondary btn-sm">Add Variant</a>
+    </div>
+  </div>
+
+  <h2>Variants</h2>
+  <hr>
+
+  {% if variants %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Color</th>
+        <th>Stock</th>
+        <th>Price </th>
+        <th>Brand</th>
+        <th>Quality</th>
+        <th>Features</th>
+        <th>Available</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for variant in variants %}
+        <tr>
+          <td>{{ variant.color }}</td>
+          <td>{{ variant.stock }}</td>
+          <td>
+            
+            ₹{{ variant.total_price }}
+      
+          </td>
+          <td>{{ variant.brand }} </td>
+          <td>{{ variant.quality }} </td>
+          <td>{{ variant.features }} </td>
+          <td>{{ variant.is_available|yesno:"Yes,No" }}</td>
+          <td>
+            <a href="{% url 'edit_variant' variant.id %}" class="btn btn-sm btn-primary">Edit</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No variants available for this product.</p>
+{% endif %}
+
+
+</div>
+
+{% endblock %}

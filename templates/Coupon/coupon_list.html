@@ -1,0 +1,58 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block title %}Coupon List{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center">Coupon List</h1>
+    <hr>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Discount Percentage</th>
+                        <th scope="col">Max Usage Count</th>
+                        <th scope="col">Valid From</th>
+                        <th scope="col">Valid To</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for coupon in coupons %}
+                        <tr>
+                            <td>{{ coupon.code }}</td>
+                            <td>{{ coupon.discount_percent }}</td>
+                            <td>{{ coupon.max_usage_count }}</td>
+                            <td>{{ coupon.valid_from }}</td>
+                            <td>{{ coupon.valid_to }}</td>
+                            <td>
+                                {% if coupon.is_valid %}
+                                <p class="text-success">Coupon is valid</p>
+                                {% else %}
+                                <p class="text-danger">Coupon is not valid</p>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'CouponDetail' coupon.id %}" class="btn btn-info btn-sm">Details</a>
+                                <!-- Add more action buttons if needed -->
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'add_coupon' %}" class="btn btn-primary">Add Coupon</a>
+        <!-- Add more navigation buttons if needed -->
+    </div>
+</div>
+
+{% endblock %}

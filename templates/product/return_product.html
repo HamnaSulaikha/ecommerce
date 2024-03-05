@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Return Product</h1>
+    <p>You are requesting to return the product with item ID: {{ item.id }}</p>
+
+    <!-- Display product details -->
+    <p>Product Name: {{ item.product.name }}</p>
+    <p>Product Price: {{ item.product.price }}</p>
+    <!-- Add more product details as needed -->
+
+    <form method="post" action="">
+        {% csrf_token %}
+        
+        <!-- Additional form fields if needed, e.g., return reason -->
+        <label for="return_reason">Return Reason:</label>
+        <textarea id="return_reason" name="return_reason" rows="4" cols="50"></textarea>
+
+        <button type="submit" class="btn btn-danger">Submit Return Request</button>
+    </form>
+</div>
+{% endblock %}

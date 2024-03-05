@@ -1,0 +1,82 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block title %}
+Admin Panel
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+  <h1>Add Product</h1>
+
+  <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+
+      <label for="name" class="form-label">Product Name:</label>
+      <input type="text" class="form-control" id="name" name="name" required>
+
+    </div>
+    
+    <div class="mb-3">
+
+      <label for="description" class="form-label">Description:</label>
+      <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+
+    </div>
+
+    <div class="mb-3">
+
+      <label for="category" class="form-label">Category:</label>
+      <select class="form-select" id="category" name="category" required>
+        {% for category in categories %}
+        <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+      </select>
+
+    </div>
+
+    <div class="mb-3">
+
+      <label for="price" class="form-label">Price:</label>
+      <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+
+    </div>
+
+    <div class="mb-3">
+
+
+      <label for="discount_percentage" class="form-label">Discount Percentage (optional):</label>
+      <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" step="0.01" value="0">
+    </div>
+
+    <div class="mb-3">
+
+
+      <label for="brand" class="form-label">Brand:</label>
+      <input type="text" class="form-control" id="brand" name="brand" step="0.01">
+    </div>
+
+    <div class="mb-3">
+
+
+      <label for="rating" class="form-label">Rating:</label>
+      <input type="number" class="form-control" id="rating" name="rating" step="0.01">
+    </div>
+
+    <div class="mb-3">
+
+      <label for="image" class="form-label">Image:</label>
+      <input type="file" class="form-control" id="image" name="image">
+
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Create Product</button>
+  </form>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+    <div class='row'>
+
+        {% for variant in variants %}
+
+        <div class='col-lg-4'>
+            <img class='thumbnail' src="{{ variant.image.url }}" alt="{{ variant.product.name }}">
+            <div class='box-element product'>
+                <h6><strong>{{ variant.product.name }}</strong></h6>
+                <hr>
+                <button class='btn btn-outline-secondary add-btn'>Add To Cart</button>
+                <a class="btn btn-outline-success" href="{% url 'product_details' variant.id %}">View</a>
+                <h4 style="display: inline-block;float: right">{{ variant.product.price|floatformat:2 }}</h4>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,131 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+  <h1 class="mb-4">Thank You for Your Order!</h1>
+
+  <p>Your order has been successfully placed. Please complete the payment to finalize your order.</p>
+
+  {% if order %}
+  <h2>Order Details</h2>
+  <p id="var_orderid">Order ID: {{ order.id }}</p>
+  <p>Order Date: {{ order.order_date }}</p>
+  
+  <p><span>Total Price: ₹</span><span id="var_total">{{ order.total_price }}</span></p>
+  
+
+  {% if order.payment_status == 'Pending' %}
+  <div id="payment-status"><p>Payment Status: {{ order.payment_status }} <span class="text-warning">(Pending payment)</span></p> </div>
+
+<button id="rzp-button1" type="button" class="btn btn-primary btn-sm">
+  Complete Payment Now
+</button>
+
+{% endif %}
+  <p>Delivery Status: {{ order.delivery_status }}</p>
+  {% if order.shipping_address %}
+    <p>Shipping Address:</p>
+    <address>
+      {{ user.username }}<br>
+      {{ order.shipping_address.street }}<br>
+      {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}<br>
+     
+    </address>
+  {% endif %}
+
+  <h2>Order Items</h2>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cart_item in order.cart_items.all %}
+      <tr>
+        <td>{{ cart_item.title }}</td>
+        <td>{{ cart_item.quantity }}</td>
+        <td>₹{{ cart_item.product.price }}</td>
+        <td>₹{{ cart_item.sub_total }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">Total Price</td>
+        <td>₹{{ order.total_price }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+
+{% endif %}
+</div>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+var var_total = $('#var_total').text().replace('₹', '').trim();
+var order_id = $('#var_orderid').text().replace('Order ID: ', '').trim();
+
+var options = {
+  "key": "rzp_test_zvfZpgdJZhTlt5", 
+  "amount": var_total * 100, 
+  "currency": "INR",
+  "name": "ecommerce",
+  "description": "Test Transaction",
+  "image": "{% static 'images/logo.png' %}",
+  "order_id": "{{payment.id}}", 
+  
+  "handler": function (response){
+
+    updatePaymentStatus(order_id);
+      
+  },
+
+  "theme": {
+      "color": "#3399cc"
+  }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+      console.log(response.error.description);
+      alert(response.error.description);
+      
+});
+document.getElementById('rzp-button1').onclick = function(e){    
+  rzp1.open();
+  e.preventDefault();
+}
+
+function updatePaymentStatus(orderId) {
+console.log('Updating payment status for order ID:', orderId);
+$.ajax({
+    type: 'POST',
+    url: '/update-payment-status/', 
+    data: {'order_id': orderId},
+    dataType: 'json',
+    success: function(data) {
+        console.log('Payment status updated successfully');
+        $('#payment-status').text('Payment Status: ' + data.payment_status);
+        if (data.payment_status === 'Paid') {
+        $('#rzp-button1').hide();
+        $('#payment-status').text('Payment Status: ' + data.payment_status);
+
+  }
+
+    },
+    error: function(error) {
+        console.error('Error updating payment status:', error);
+    }
+});
+}
+</script>  
+
+{% endblock %}

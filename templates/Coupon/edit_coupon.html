@@ -1,0 +1,25 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block title %}Edit Coupon{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center">Edit Coupon</h1>
+    <hr>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" action="{% url 'edit_coupon' coupon.id %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Update Coupon</button>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}

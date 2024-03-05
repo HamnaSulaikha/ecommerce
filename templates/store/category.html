@@ -1,0 +1,29 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div class='col-lg-12'>
+    
+        <img src="{% static 'images/banner1.jpg' %}">
+    
+
+        <div class='row'>
+            {% for category in category %}
+        
+            <div class='col-lg-4'>
+                <img class='thumbnail' src="{{ category.image.url }}">
+                <div class='box-element product'>
+                    <h6><strong>{{ category.name }}</strong></h6>
+                    <hr>
+                    
+                    <a class="btn btn-outline-success" href="{% url 'store' category.id %}">View</a>
+                    
+                </div>
+            </div>
+            {% endfor %}
+    
+        
+        </div>
+
+</div>
+{% endblock content %}

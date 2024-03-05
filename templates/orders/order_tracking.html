@@ -1,0 +1,130 @@
+{% extends 'main.html' %}
+
+<script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/dist/alertify.min.js"></script>
+{% load static %}
+{% block content %}
+
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+  <div class="card text-center">
+    <div class="card-header bg-primary text-white">
+      <h1 class="mb-0">Order Tracking</h1>
+    </div>
+    <div class="card-body">
+
+      {% if order %}
+        <h2 class="card-title">Order #{{ order.id }}</h2>
+       
+        <p class="card-text">Order Date: {{ order.order_date }}</p>
+        <p class="card-text" id="total_price">Total Price: ₹{{ order.total_price }}</p>
+        {% if order.payment_status == 'Pending' %}
+          <p class="card-text text-info mb-4">Payment Status: {{ order.payment_status }} (Pending payment)</p>
+          <button id="rzp-button1" >Pay with Razorpay</button>
+          <input type="hidden" class="var_orderid" value="{{order.id}}">
+        {%  else%}
+        
+        <button type="button" class="btn btn-success">Payment complteted</button>
+          
+        {% endif %}
+
+        <p class="card-text">Delivery Status: {{ order.delivery_status }}</p>
+       
+        <!-- Display ordered items -->
+        <h3 class="mt-4">Ordered Items:</h3>
+        <ul class="list-group">
+          {% for item in order.cart_items.all %}
+            <li class="list-group-item">
+              {{ item.title }} (Quantity: {{ item.quantity }})
+              - ₹{{ item.sub_total }}
+            </li>
+          {% endfor %}
+        </ul>
+
+        {% if order.delivery_status == 'Pending' %}
+          <form action="{% url 'cancel_order' order.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Cancel Order</button>
+          </form>
+
+          <form action="{% url 'change_address' order.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="new_address">Change Address:</label>
+              <select id="new_address" name="new_address" class="form-select">
+                {% for address in addresses %}
+                <option value="{{ address.id }}">{{ address.street }} {{ address.city }} {{ address.state }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Address</button>
+          </form>
+        {% endif %}
+      {% else %}
+        <p class="card-text">No order found.</p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var orderId = $('.var_orderid').val();
+var options = {
+    "key": "rzp_test_zvfZpgdJZhTlt5", 
+    "amount": '{{payment.amount}}', 
+    "currency": "INR",
+    "name": "ecommerce",
+    "description": "Test Transaction",
+    "image": "{% static 'images/logo.png' %}",
+    "order_id": "{{payment.id}}", 
+    
+
+
+
+    "handler": function (response){
+        //alert(response.razorpay_payment_id);
+        //alert(response.razorpay_order_id);
+        //alert(response.razorpay_signature)
+
+        // Make an Ajax request to update the payment status
+        updatePaymentStatus(orderId);
+        
+    },
+
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        //alert(response.error.code);
+        alert(response.error.description);
+        //alert(response.error.source);
+       //alert(response.error.step);
+        //alert(response.error.reason);
+        //alert(response.error.metadata.order_id);
+        //alert(response.error.metadata.payment_id);
+});
+document.getElementById('rzp-button1').onclick = function(e){    
+    rzp1.open();
+    e.preventDefault();
+}
+
+function updatePaymentStatus(orderId) {
+  console.log('Updating payment status for order ID:', orderId);
+  $.ajax({
+      type: 'POST',
+      url: '/update-payment-status/', 
+      data: {'order_id': orderId},
+      dataType: 'json',
+      success: function(data) {
+          console.log('Payment status updated successfully');
+      },
+      error: function(error) {
+          console.error('Error updating payment status:', error);
+      }
+  });
+}
+</script>
+
+{% endblock %}

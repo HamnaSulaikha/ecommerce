@@ -1,0 +1,166 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block title %}
+Admin Panel
+{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+<div class="container mt-5">
+  <div class="row m-4">
+    <div class="col-md-6">
+      
+      <a href="{% url 'export_orders_to_csv' %}" class="btn btn-primary">Export Orders to CSV</a>
+    </div>
+    <div class="col-md-6">
+      <a href="{% url 'export_orders_to_pdf' %}" class="btn btn-primary">Export Orders to PDF</a>
+    </div>
+  </div>
+
+
+  <div class="row">
+      <div class="col-md-6 mb-4">
+          <div class="card">
+              <h5 class="card-header">Category Sales</h5>
+              <div class="card-body">
+                  <canvas id="pieChart1" width="400" height="200"></canvas>
+              </div>
+          </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+          <div class="card">
+              <h5 class="card-header">Monthly Sales</h5>
+              <div class="card-body">
+                  <canvas id="barChart" width="400" height="200"></canvas>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col-md-6 mb-4">
+          <div class="card">
+              <h5 class="card-header">Monthly Sales Amount</h5>
+              <div class="card-body">
+                  <canvas id="barChartAmount" width="400" height="200"></canvas>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  var labels = [];
+  var data = [];
+
+  {% for status in order_counts_by_status %}
+      {% if status.status == 'Pending' %}
+          labels.push("Pending Orders");
+      {% elif status.status == 'Shipped' %}
+          labels.push("Shipped Orders");
+      {% elif status.status == 'Cancelled' %}
+          labels.push("Cancelled Orders");
+      {% elif status.status == 'Delivered' %}
+          labels.push("Delivered Orders");
+      {% endif %}
+      data.push({{ status.count }});
+  {% endfor %}
+
+  var backgroundColors = generateRandomColors(data.length);
+
+  var ctx1 = document.getElementById('pieChart1').getContext('2d');
+  var myPieChart1 = new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+          labels: labels,
+          datasets: [{
+              data: data,
+              backgroundColor: backgroundColors,
+          }]
+      },
+  });
+
+  // Bar chart
+  var ctx = document.getElementById('barChart').getContext('2d');
+  var myBarChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: {{ month_labels | safe }},
+          datasets: [{
+              label: 'Order Count',
+              data: {{ monthly_values | safe }},
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+
+  var labelsAmount = {{ month_labels_amount | safe }};
+  var dataAmount = {{ monthly_amount | safe }};
+  
+  var ctxAmount = document.getElementById('barChartAmount').getContext('2d');
+    var myBarChartAmount = new Chart(ctxAmount, {
+        type: 'bar',
+        data: {
+            labels: labelsAmount,
+            datasets: [{
+                label: 'Monthly Sales Amount',
+                data: dataAmount,
+                backgroundColor: backgroundColorsAmount,
+                borderColor: backgroundColorsAmount,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+  // Function to generate random colors
+  function generateRandomColors(count) {
+      var colors = [];
+      for (var i = 0; i < count; i++) {
+          // Generate a random color in hex format
+          var color = '#' + Math.floor(Math.random()*16777215).toString(16);
+          colors.push(color);
+      }
+      return colors;
+  };
+
+
+  function exportToPDF() {
+    // Add your logic to export data to PDF
+    alert("Exporting to PDF...");
+};
+
+// Export to Excel function
+function exportToExcel() {
+    // Add your logic to export data to Excel
+    alert("Exporting to Excel...");
+}
+</script>
+
+  
+  
+
+  
+
+{% endblock %}
+

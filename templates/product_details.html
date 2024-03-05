@@ -1,0 +1,144 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<section class="product-details mt-5 mb-5 ">
+  
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-6">
+        
+        <img src="{{ variant.image.url }}" alt="{{variant.product.name }}" class="img-fluid" id="mainImage" >
+        
+        <div class="row mt-3">
+          <div class="col-4">
+            <a href="#">
+              <img src="{{ variant.image.url }}" class="img-thumbnail" alt="{{ product.name }}" onclick="changeImage(this)">
+            </a>
+          </div>
+          
+          <div class="col-4">
+            <a href="#">
+              <img src="{{ variant.image.url }}" class="img-thumbnail" alt="{{ product.name }}" onclick="changeImage(this)">
+            </a>
+          </div>
+          
+          <div class="col-4">
+            <a href="#">
+              <img src="{{ variant.image.url }}" class="img-thumbnail" alt="{{ product.name }}" onclick="changeImage(this)">
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <h1>{{ variant.product.name }}</h1>
+        <p class="lead mb-3">{{ variant.product.description }}</p>
+        
+        <div class="d-flex align-items-center mb-3">
+          <i class="fas fa-star text-warning"></i> {{ variant.product.rating }}
+          <span class="ml-2">|</span> Fittings: {{ variant.fittings }} 
+          <span class="ml-2">|</span> Quality: {{ variant.quality }}
+          <span class="ml-2">|</span> Features: {{ variant.features }} 
+          <span class="ml-2">|</span> Brand: {{ variant.product.brand }}
+        </div>
+        
+        <section class="product-details mt-5 mb-5">
+          
+          <div class="container">
+            <div class="row g-4">
+              <div class="mb-3">
+                <h5>Available Variants:</h5>
+                <ul class="list-unstyled">
+                  {% for variant in variants %}
+                  <li>
+                    <a href="{% url 'product_details' variant.id %}" class="{% if variant == selected_variant %}text-primary font-weight-bold{% endif %}">
+                      {{ variant.product.name }} - {{ variant.color }}
+                    </a>
+                  
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          {% csrf_token %}
+          <input type="hidden" class="var_id" value="{{variant.id}}">
+          <input type="hidden" class="var_name" value="{{ variant.product.name|add:variant.color }}">
+          <input type="number" class="var_qty" value="1" min="1">
+          <a href="#" id="add_to_cart_btn" class="btn btn-primary"><i class="fas fa-cart-plus " ></i> Add to Cart</a>
+          <a href="#" class="btn btn-outline-primary"><i class="far fa-heart"></i> Add to Wishlist</a>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <h4>Product Reviews</h4>
+    <hr>
+    {% if reviews %}
+      <div class="row g-4">
+        {% for review in reviews %}
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ review.user.username }} - {{ review.rating }} stars</h5>
+                <p class="card-text">{{ review.review_text }}</p>
+                <small class="text-muted">Posted on {{ review.created_at }}</small>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No reviews available for this product.</p>
+    {% endif %}
+    <h4>Similar Products</h4>
+  </div>
+</section>
+<script async src="your-script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/dist/alertify.min.js"></script>
+<script>
+  function changeImage(image) {
+    document.getElementById("mainImage").src = image.src;
+  }
+  
+  $('#add_to_cart_btn').click(function(e){
+    e.preventDefault();
+    
+    var var_id = $('.var_id').val();
+    var var_qty = $('.var_qty').val();
+    var var_name = $('.var_name').val();
+    var token = $('input[name=csrfmiddlewaretoken]').val();
+    
+    
+    $.ajax({
+      type: "POST",
+      url: "{% url 'add_to_cart' %}",
+      data: {
+        'product_id':var_id,
+        'product_qty':var_qty,
+        'product_name':var_name,
+        csrfmiddlewaretoken:token
+      },
+      
+      success: function (response) {
+        console.log(response)
+        alert( response.status)
+      }
+    });
+
+  })
+
+
+
+ 
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,44 @@
+<!-- order_list.html -->
+
+{% extends 'main.html' %}
+
+
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/dist/alertify.min.js"></script>
+
+<div class="container">
+  
+  <h1 class="mb-4">Order List</h1>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Order ID</th>
+        <th scope="col">Order Date</th>
+        <th scope="col">Total Price</th>
+        <th scope="col">Delivery Status</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.order_date }}</td>
+        <td>₹{{ order.total_price }}</td>
+        <td>{{ order.delivery_status }}</td>
+        <td>
+          {% if order.delivery_status == 'Pending' or order.delivery_status == 'Shipped' %} 
+          <a href="{% url 'order_tracking' order.id %}" class="btn btn-sm btn-primary">Track Order</a>
+          {% else %}
+          <a href="{% url 'order_invoice' order.id %}" class="btn btn-sm btn-primary">Invoice</a>
+          <a href="{% url 'order_details' order.id %}" class="btn btn-sm btn-primary">Order Details</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

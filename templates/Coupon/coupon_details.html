@@ -1,0 +1,41 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block title %}Coupon List{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center">Coupon Details</h1>
+    <hr>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Coupon Code: {{ coupon.code }}</h5>
+            <h5>Discount Percentage: {{ coupon.discount_percent }}%</h5>
+            <h5>Max Usage Count: {{ coupon.max_usage_count }}</h5>
+            <h5>Current Usage Count: {{ coupon.current_usage_count }}</h5>
+        </div>
+        <div class="col-md-6">
+            <h5>Validity Period:</h5>
+            <p>Valid From: {{ coupon.valid_from }}</p>
+            <p>Valid To: {{ coupon.valid_to }}</p>
+            <h5>Status:</h5>
+            {% if coupon.is_valid %}
+                <p class="text-success">Coupon is valid</p>
+            {% else %}
+                <p class="text-danger">Coupon is not valid</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'coupon_list' %}" class="btn btn-primary">Back to Coupon List</a>
+    </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'edit_coupon' coupon.id  %}" class="btn btn-info">Edit</a>
+    </div>
+</div>
+</div>
+
+{% endblock %}

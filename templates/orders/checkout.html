@@ -1,0 +1,138 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+  <h1 class="mb-4">Checkout</h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title mb-4">Order Summary</h2>
+          <ul class="list-group">
+            {% for item in cart_items %}
+            <li class="list-group-item">
+              <img src="{{ item.product.image.url }}" alt="{{ item.title }}" class="img-thumbnail mr-2" style="width: 50px;">
+              {{ item.title }} x {{ item.quantity }} - ₹{{ item.sub_total }}
+            </li>
+            {% endfor %}
+            <li class="list-group-item d-flex justify-content-between">
+              <div id="totalAmount" class="mb-3">
+                <label>Total Amount:</label>
+                <span id='totalAmountValue'>₹{{ total_price }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title mb-4">Shipping and Payment Details</h2>
+          <form method="post" id="checkoutForm">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="shipping_address" class="form-label">Shipping Address:</label>
+              <select id="shipping_address" name="shipping_address" class="form-select">
+                {% for address in addresses %}
+                <option value="{{ address.id }}">{{ address.street }} {{ address.city }} {{ address.state }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="payment_type" class="form-label">Payment Method:</label>
+              <select id="payment_type" name="payment_type" class="form-select">
+                {% for type in payment_types %}
+                <option value="{{ type }}">{{ type }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="coupon_code" class="form-label">Coupon Code:</label>
+              <div class="mb-3 input-group justify-content-center">
+                <input type="text" id="coupon_code" name="coupon_code" class="form-control" placeholder="Enter your coupon code">
+                <button type="button" id="apply_coupon" class="btn btn-secondary">Apply Coupon</button>
+              </div>
+              
+              <p id="appliedCoupon" class="mt-2" style="display: none;">Applied Coupon: <span id="appliedCouponCode"></span> <a href="#" id="revertCoupon">Revert</a></p>
+              <p id="amountSaved" class="mt-2" style="display: none;">Amount Saved: ₹<span id="savedAmount"></span></p>
+           </div>
+
+            <div id="paymentButtonContainer" class="mb-3">
+              
+              <button id="placeOrderButton" class="btn btn-primary" type="submit">Place Order</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    // Store the original total amount when the page loads
+    var originalTotalAmount = parseFloat($("#totalAmountValue").text().replace('₹', ''));
+
+    $("#apply_coupon").click(function () {
+      var couponCode = $("#coupon_code").val();
+      var totalAmountValue = parseFloat($("#totalAmountValue").text().replace('₹', ''));
+
+      $.ajax({
+        type: "POST",
+        url: "{% url 'apply_coupon' %}",
+        data: {
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+          coupon_code: couponCode,
+          total_amount: totalAmountValue
+        },
+        success: function (response) {
+          // Update the total amount and show a message
+          $("#totalAmountValue").text("₹" + response.total_amount);
+          
+          if (response.saved_amount > 0) {
+            // Display applied coupon code and amount saved
+            $("#appliedCouponCode").text(couponCode);
+            $("#savedAmount").text(response.saved_amount);
+
+            // Show the sections
+            $("#appliedCoupon").show();
+            $("#amountSaved").show();
+
+            alert("Coupon applied successfully! New total: ₹" + response.total_amount);
+          } else {
+            alert("Coupon applied successfully! New total: ₹" + response.total_amount);
+          }
+        },
+        error: function () {
+          alert("Invalid coupon code or coupon expired.");
+        }
+      });
+    });
+
+    // Revert coupon when the user clicks on the revert link
+    $("#revertCoupon").click(function (e) {
+      e.preventDefault();
+      revertCoupon(originalTotalAmount);
+    });
+
+    function revertCoupon(originalTotalAmount) {
+      // Reset coupon-related information
+      $("#coupon_code").val("");
+      $("#appliedCouponCode").text("");
+      $("#savedAmount").text("");
+
+      // Hide the sections
+      $("#appliedCoupon").hide();
+      $("#amountSaved").hide();
+
+      // Reset total amount to its original value
+      $("#totalAmountValue").text("₹" + originalTotalAmount);
+    }
+
+    // Other existing JavaScript code
+  });
+</script>
+{% endblock content %}
