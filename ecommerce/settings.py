@@ -88,11 +88,11 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',    
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '9605888500',
+        'NAME': 'myproject',
+        'USER': 'myprojectuser',
+        'PASSWORD': 'password',
         'HOST': 'localhost', 
-        'PORT': '5432',      
+        'PORT': '',      
     }
 }
 
@@ -144,6 +144,8 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+import os
 
 
 
