@@ -60,24 +60,20 @@ def loginpage(request):
 
             user = authenticate(request, username= username, password= password)
             otp=random.randint(1000,9999)
-
+            
             if user is not None:
-
-                user_profile = UserProfile.objects.get(user=user)
-                phone_number = user_profile.phone
                 
-                user_profile.otp = otp
-                user_profile.save()
+                login(request, user)
                 
-                messagehandler = MessageHandler(phone_number, otp).send_otp_via_message()
-                
-                return redirect('otp_verify')
+                return redirect('home')
             
             else:
-                messages.info(request, 'Username or Password is incorrect')
-
-        context = {}
-        return render(request, 'user/login.html', context)
+                
+                messages.info(request,'User name or password not matching')
+                
+                
+    context = {}
+    return render(request,'user/login.html',context)
     
 def otp_verify(request):
     if request.method == "POST":

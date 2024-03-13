@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-qk^+1ww9$bdf+b&bt78r+ykjkkd@*3+l^3ad^)laz^v)^%no1b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -86,16 +86,16 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+   'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',    
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '9605888500',
+       'NAME': 'myproject',
+        'USER': 'myprojectuser',
+        'PASSWORD': 'password',
         'HOST': 'localhost', 
-        'PORT': '5432',      
+        'PORT': '',      
     }
 }
-
+INSTALLED_APPS
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -137,6 +137,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
@@ -146,8 +147,8 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-ACCOUNT_SID='AC90287cc3f840c78a92c9bedea27263ec'
-AUTH_TOKEN='6f1fc03fbcef385c13ecc6505bde0003'
+ACCOUNT_SID=''
+AUTH_TOKEN=''
 COUNTRY_CODE='+91'
 TWILIO_WHATSAPP_NUMBER='whatsapp:+14155238886'
 TWILIO_PHONE_NUMBER='+15852681033'
