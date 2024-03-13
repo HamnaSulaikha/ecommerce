@@ -65,7 +65,7 @@ def loginpage(request):
                 
                 login(request, user)
                 
-                return redirect('home')
+                return redirect('category')
             
             else:
                 
